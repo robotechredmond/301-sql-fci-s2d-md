@@ -81,20 +81,6 @@
         "description": "Name of the existing subnet in the existing VNET to which the S2D VMs should be deployed"
       }
     },
-    "sofsName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of clustered Scale-Out File Server role"
-      },
-      "defaultValue": "fs01"
-    },
-    "shareName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of shared data folder on clustered Scale-Out File Server role"
-      },
-      "defaultValue": "data"
-    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -155,12 +141,6 @@
           "vmDiskCount": {
             "value": "[parameters('vmDiskCount')]"
           },
-          "sofsName": {
-            "value": "[parameters('sofsName')]"
-          },
-          "shareName": {
-            "value": "[parameters('shareName')]"
-          },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
           },
@@ -172,9 +152,5 @@
     }
   ],
   "outputs": {
-    "sofsPath": {
-      "type": "string",
-      "value": "[concat('\\\\',reference(variables('deployS2DCluster')).outputs.sofsName.value,'\\',reference(variables('deployS2DCluster')).outputs.shareName.value)]"
-    }
   }
 }

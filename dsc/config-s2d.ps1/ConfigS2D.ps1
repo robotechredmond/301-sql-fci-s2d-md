@@ -13,12 +13,6 @@ configuration ConfigS2D
         [String]$ClusterName,
 
         [Parameter(Mandatory)]
-        [String]$SOFSName,
-
-        [Parameter(Mandatory)]
-        [String]$ShareName,
-
-        [Parameter(Mandatory)]
         [String]$vmNamePrefix,
 
         [Parameter(Mandatory)]
@@ -133,21 +127,6 @@ configuration ConfigS2D
             TestScript = "(Get-ClusterSharedVolume).State -eq 'Online'"
             GetScript = "@{Ensure = if ((Get-ClusterSharedVolume).State -eq 'Online') {'Present'} Else {'Absent'}}"
             DependsOn = "[Script]IncreaseClusterTimeouts"
-        }
-
-        xSOFS EnableSOFS
-        {
-            SOFSName = $SOFSName
-            DomainAdministratorCredential = $DomainCreds
-            DependsOn = "[Script]EnableS2D"
-        }
-
-        Script CreateShare
-        {
-            SetScript = "New-Item -Path C:\ClusterStorage\Volume1\${ShareName} -ItemType Directory; New-SmbShare -Name ${ShareName} -Path C:\ClusterStorage\Volume1\${ShareName} -FullAccess ${DomainName}\$($AdminCreds.Username)"
-            TestScript = "(Get-SmbShare -Name ${ShareName} -ErrorAction SilentlyContinue).ShareState -eq 'Online'"
-            GetScript = "@{Ensure = if ((Get-SmbShare -Name ${ShareName} -ErrorAction SilentlyContinue).ShareState -eq 'Online') {'Present'} Else {'Absent'}}"
-            DependsOn = "[xSOFS]EnableSOFS"
         }
 
         LocalConfigurationManager 
