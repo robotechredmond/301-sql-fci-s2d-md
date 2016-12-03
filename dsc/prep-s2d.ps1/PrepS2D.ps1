@@ -24,7 +24,21 @@ configuration PrepS2D
     [System.Management.Automation.PSCredential]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainNetbiosName}\$($Admincreds.UserName)", $Admincreds.Password)
     [System.Management.Automation.PSCredential]$DomainFQDNCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
 
+    # Wait for default SQL Server single-node setup to complete
+    
     WaitForSqlSetup
+
+    # Uninstall default SQL Server single-node installation
+
+    Import-Module SQLPS -DisableNameChecking
+
+    $instance = (Get-Item SQLSERVER:\sql\$env:ComputerName\DEFAULT -ErrorAction SilentlyContinue).IsClustered
+
+    if (!$instance) {
+
+        Start-Process -Wait -FilePath "C:\SQLServer_13.0_Full\setup.exe" -ArgumentList "/ACTION=Uninstall /FEATURES=SQL,AS,RS /INSTANCENAME=MSSQLSERVER /Q /HIDECONSOLE"
+
+    }
     
     Node localhost
     {
